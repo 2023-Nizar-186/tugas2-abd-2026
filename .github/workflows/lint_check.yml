@@ -1,0 +1,25 @@
+name: Lint and App Validation
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install ruff
+          pip install -r requirements.txt
+      - name: Validate Python modules compilation
+        run: python -m compileall src app.py
+      - name: Lint Python code with ruff
+        run: ruff check src app.py --select=E9,F63,F7,F82 --show-source
+      - name: Check architecture documentation exists
+        run: test -f docs/architecture.md
